@@ -96,7 +96,7 @@ public class AutorController {
     public ResponseEntity<List<AutorDTO>> pesquisar( // Define retorno com status HTTP e lista de DTOs
                   @RequestParam(value = "nome", required = false) String nome, // Parametro opcional 'nome' vindo da query string // filtro por nome (pode ser null)
                   @RequestParam(value = "nacionalidade", required = false) String nacionalidade) { // Parametro opcional 'nacionalidade' // filtro por nacionalidade (pode ser null)
-        List<Autor> lista = service.pesquisa(nome, nacionalidade); // Chama o service para obter lista de entidades conforme filtros
+        List<Autor> lista = service.pesquisaByExample(nome, nacionalidade); // Chama o service para obter lista de entidades conforme filtros
         List<AutorDTO> listaDTO = lista // Inicia conversão de entidades para DTOs
                 .stream() // Cria stream para processar a coleção de forma funcional // permite mapear cada elemento
                 .map(autor -> new AutorDTO( // Para cada Autor cria um AutorDTO com os campos necessários
@@ -112,7 +112,7 @@ public class AutorController {
     @PutMapping("/{id}") // Mapeia requisicoes HTTP PUT para este metodo, com um parametro de caminho {id}
     public ResponseEntity<Object> atualizar(
             @PathVariable("id") String id,
-            @RequestBody AutorDTO dto) {
+            @RequestBody @Valid AutorDTO dto) { // Recebe o ID do autor a ser atualizado e os dados atualizados no corpo da requisicao, validando o DTO conforme as anotações de validação presentes na classe AutorDTO
         try {
             var idAutor = UUID.fromString(id); // Converte a string do ID para UUID
             Optional<Autor> autorOpcional = service.obterPorId(idAutor); // Busca o autor pelo ID usando o servico

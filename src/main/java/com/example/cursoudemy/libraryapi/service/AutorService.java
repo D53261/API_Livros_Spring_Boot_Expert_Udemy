@@ -6,6 +6,8 @@ import com.example.cursoudemy.libraryapi.repository.AutorRepository;
 import com.example.cursoudemy.libraryapi.repository.LivroRepository;
 import com.example.cursoudemy.libraryapi.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,6 +67,30 @@ public class AutorService {
         }
 
         return repository.findAll();  // Se nenhum parâmetro for fornecido, retorna todos os autores
+    }
+
+    public List<Autor> pesquisaByExample(String nome, String nacionalidade) { // Pesquisa autores usando Example para busca dinâmica
+        var autor = new Autor(); // Cria uma nova instância de Autor para servir como exemplo de busca
+        autor.setNome(nome);
+        autor.setNacionalidade(nacionalidade);
+
+        ExampleMatcher matcher = ExampleMatcher // Constrói o ExampleMatcher para personalizar a busca
+                .matching() // Inicia a construção do matcher
+                .withIgnoreNullValues() // Ignora valores nulos nos campos do exemplo, buscando apenas o desejado pelo cliente
+                .withIgnoreCase() // Ignora diferenças entre maiúsculas e minúsculas, eliminando este fator da busca
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING) // Define o tipo de correspondência para strings (padrão é 'CONTAINING', que busca por letras entre palavras, mas pode ser tambem 'STARTING', sendo a busca por itens que iniciem com a string digitada, 'ENDING', os que finalizam com a string digitada ou 'EXACT', buscando exatamente a string digitada)
+                .withIgnorePaths("id", "dataNascimento"); // Ignora os campos 'id' e 'dataNascimento' na busca ou os campos que nao serao usados na busca
+        Example<Autor> autorExample = Example.of(autor, matcher); // Cria o Example<Autor> com a entidade de exemplo e o matcher personalizado
+        return repository.findAll(autorExample); // Realiza a busca dinâmica usando o Example
+
+        /**
+         * Neste código acima, criamos um ExampleMatcher personalizado que:
+         * - Ignora valores nulos, permitindo buscas parciais.
+         * - Ignora diferenças entre maiúsculas e minúsculas.
+         * - Usa correspondência "CONTAINING" para strings, permitindo buscas por substrings.
+         * Em seguida, criamos um Example<Autor> com a entidade de exemplo e o matcher, e usamos repository.findAll(autorExample) para realizar a busca dinâmica.
+         * A necessidade do Example surge quando queremos permitir buscas flexíveis e dinâmicas, onde os critérios podem variar conforme a entrada do usuário.
+         */
     }
 
     public boolean possuiLivro(Autor autor) { // Verifica se o autor possui livros cadastrados

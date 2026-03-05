@@ -35,14 +35,6 @@ public record AutorDTO(
                 message = "A nacionalidade do autor deve conter entre 2 e 50 caracteres" // Mensagem de erro caso a validacao falhe
         )
         String nacionalidade) {
-    // Mapeia o DTO para a entidade Autor
-    public Autor mapearParaAutor() {
-        Autor autor = new Autor();
-        autor.setNome(this.nome);
-        autor.setDataNascimento(this.dataNascimento);
-        autor.setNacionalidade(this.nacionalidade);
-        return autor;
-    }
 }
 
 /**
@@ -50,4 +42,10 @@ public record AutorDTO(
  * Limpeza dos dados antes de enviá-los para a camada de serviço ou para o banco de dados.
  * Isso ajuda a garantir que apenas os dados necessários e válidos sejam processados,
  * reduzindo o risco de erros e melhorando a eficiência do sistema.
+ *
+ * Agora com a utilização do MapStruct, a conversão entre as entidades do domínio e os DTOs
+ * é feita de forma automática e eficiente, sem precisar da função anteriormente criada, eliminando
+ * a necessidade de escrever manualmente os métodos de mapeamento. O MapStruct gera o código de
+ * mapeamento em tempo de compilação, garantindo alta performance e segurança de tipo, além de facilitar a manutenção do código,
+ * já que qualquer alteração nas entidades ou DTOs será refletida automaticamente no código gerado.
  */

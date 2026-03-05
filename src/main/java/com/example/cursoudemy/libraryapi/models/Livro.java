@@ -3,15 +3,20 @@ package com.example.cursoudemy.libraryapi.models;
 import jakarta.persistence.*; // Importa as anotações JPA para mapeamento ORM
 import lombok.Data; // Lombok: gera getters, setters, equals, hashCode e toString automaticamente
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate; // Representa datas sem horário
+import java.time.LocalDateTime;
 import java.util.UUID; // Identificador único universal
 
 @Entity // Indica que esta classe é uma entidade JPA
 @Table(name = "livro") // Mapeia para a tabela 'livro' no banco de dados
 @Data // Lombok: gera métodos utilitários para todos os campos
-@ToString(exclude = "autor")
+@ToString(exclude = "autor") // Lombok: gera o metodo toString para a classe, excluindo o campo 'autor' para evitar recursão infinita ao imprimir o livro (pois autor tem uma lista de livros)
+@EntityListeners(AuditingEntityListener.class) // Habilita o suporte a auditoria (criação e modificação automática de datas se essas ou outros campos forem anotados)
 public class Livro {
     @Id // Indica o campo como chave primária
     @Column(name = "id") // Mapeia para a coluna 'id'
@@ -42,6 +47,16 @@ public class Livro {
     @JoinColumn(name = "id_autor") // Mapeia para a coluna 'autor' (chave estrangeira)
     private Autor autor; // Referência ao autor do livro
 
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro; // Data e hora do cadastro do autor
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao; // Data e hora da última atualização do autor
+
+    @Column(name = "id_usuario")
+    private UUID usuarioCadastro; // Identificador do usuário que cadastrou o autor
 
 }
 
